@@ -66,7 +66,7 @@ class _ResultBoardScreenState extends State<ResultBoardScreen> {
               child: SizedBox(
                 width: 1000,
                 child: Column(
-                  // crossAxisAlignment: CrossAxisAlignment.start,
+                
                   children: [
                     // Table Header
                     Container(
@@ -83,10 +83,11 @@ class _ResultBoardScreenState extends State<ResultBoardScreen> {
                             HeaderRow(title: 'Rank', flex: 1),
                             HeaderRow(title: 'BIB', flex: 1),
                             HeaderRow(title: 'Name', flex: 1),
-                            HeaderRow(title: 'Cycle', flex: 2),
-                            HeaderRow(title: 'Run', flex: 2),
-                            HeaderRow(title: 'Swim', flex: 2),
+                            HeaderRow(title: 'Cycle Time', flex: 2),
+                            HeaderRow(title: 'Run Time', flex: 2),
+                            HeaderRow(title: 'Swim Time', flex: 2),
                             HeaderRow(title: 'Duration', flex: 2),
+                            
                           ],
                         ),
                       ),
@@ -108,13 +109,14 @@ class _ResultBoardScreenState extends State<ResultBoardScreen> {
                               return ResultListTile(
                                 result: _results[resultIndex],
                                 isEven: resultIndex % 2 == 0,
-                                onTap: () {
+                                onEdit: () {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                         content: Text(
                                             'Editing result for ${_results[resultIndex].name}')),
                                   );
                                 },
+                                onDelete: () => _deleteResult(resultIndex),
                               );
                             },
                           ),
@@ -123,6 +125,7 @@ class _ResultBoardScreenState extends State<ResultBoardScreen> {
                         ],
                       ),
                     ),
+
 
                     // Pagination Controls
                     Container(
@@ -223,4 +226,23 @@ class _ResultBoardScreenState extends State<ResultBoardScreen> {
     final remainingItems = _totalItems - ((_currentPage - 1) * _rowsPerPage);
     return remainingItems < _rowsPerPage ? remainingItems : _rowsPerPage;
   }
+  void _deleteResult(int index) {
+  setState(() {
+    _results.removeAt(index);
+  });
+  
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: const Text('Result deleted'),
+      action: SnackBarAction(
+        label: 'Undo',
+        onPressed: () {
+          setState(() {
+            _results.insert(index, _results[index]);
+          });
+        },
+      ),
+    ),
+  );
+}
 }
