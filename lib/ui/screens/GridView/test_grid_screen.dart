@@ -13,23 +13,20 @@ class _ParticipantGridState extends State<ParticipantGrid> {
   int _currentPage = 0;
   final int _itemsPerPage = 10;
   final int _totalPages = 7;
-  
+
   // Map to store active buttons and their timestamps
-  // Key: button ID (as string), Value: timestamp string
   final Map<String, String> _activeButtons = {};
 
   void _handleButtonTap(String id) {
     setState(() {
       if (_activeButtons.containsKey(id)) {
-        // If already active, deactivate it
         _activeButtons.remove(id);
       } else {
-        // Activate and set timestamp
         final now = DateTime.now();
         final timestamp = "${now.hour.toString().padLeft(2, '0')}:"
-                         "${now.minute.toString().padLeft(2, '0')}:"
-                         "${now.second.toString().padLeft(2, '0')}."
-                         "${(now.millisecond ~/ 10).toString().padLeft(2, '0')}";
+            "${now.minute.toString().padLeft(2, '0')}:"
+            "${now.second.toString().padLeft(2, '0')}."
+            "${(now.millisecond ~/ 10).toString().padLeft(2, '0')}";
         _activeButtons[id] = timestamp;
       }
     });
@@ -44,7 +41,7 @@ class _ParticipantGridState extends State<ParticipantGrid> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            // Handle back navigation
+            Navigator.pop(context); // navigate to tracking-time
           },
         ),
       ),
@@ -147,7 +144,7 @@ class _ParticipantGridState extends State<ParticipantGrid> {
                 itemBuilder: (context, index) {
                   final itemNumber = _currentPage * _itemsPerPage + index + 1;
                   final itemId = itemNumber.toString();
-                  
+
                   return ParticipantButton(
                     id: itemId,
                     isActive: _activeButtons.containsKey(itemId),
