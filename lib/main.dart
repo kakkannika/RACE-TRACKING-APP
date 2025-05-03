@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:race_traking_app/ui/screens/2step/twoStep_screen.dart';
-import 'package:race_traking_app/ui/screens/2step/widget/TwoStep_list_tile.dart';
-import 'package:race_traking_app/ui/screens/GridView/grid_screen.dart';
-import 'package:race_traking_app/ui/screens/race_track_screen.dart';
-import 'package:race_traking_app/ui/screens/resultBoard/resultBoard_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:race_traking_app/data/repository/timer_repository.dart';
+import 'package:race_traking_app/service/timer_service.dart';
+import 'package:race_traking_app/ui/providers/participant_provider.dart';
+import 'package:race_traking_app/ui/providers/timer_provider.dart';
+import 'package:race_traking_app/ui/screens/participants/crud_participants.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -13,11 +15,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Race Tracking Demo',
-    
-      home: const RaceTrackingScreen(),
-      debugShowCheckedModeBanner: false,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ParticipantProvider()),
+        ChangeNotifierProvider(create: (context) => TimerProvider(TimerRepository(TimerService()))),
+      ],
+      child: MaterialApp(
+        title: 'Race Tracking App',
+        theme: ThemeData(
+          primarySwatch: Colors.indigo,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Color(0xFF5E64D1),
+          ),
+        ),
+        home:const  ParticipantScreen(),
+        debugShowCheckedModeBanner: false,
+      ),
     );
   }
 }

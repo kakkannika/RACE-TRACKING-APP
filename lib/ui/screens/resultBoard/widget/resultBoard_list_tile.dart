@@ -1,16 +1,16 @@
 // The ResultListTile component
 import 'package:flutter/material.dart';
-import 'package:race_traking_app/model/raceResult.dart';
-import 'package:race_traking_app/ui/screens/resultBoard/edit_result_dialog.dart';
+import 'package:race_traking_app/model/race_result_board.dart';
+import 'package:race_traking_app/ui/screens/resultBoard/widget/edit_dialog.dart';
+
 import 'package:race_traking_app/ui/theme/theme.dart';
 import 'package:race_traking_app/ui/widgets/dataRow.dart';
 
 class ResultListTile extends StatelessWidget {
-  final RaceResult result;
+  final RaceResultItem result;
   final bool isEven;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
-  
 
   const ResultListTile({
     Key? key,
@@ -18,87 +18,36 @@ class ResultListTile extends StatelessWidget {
     this.isEven = false,
     this.onEdit,
     this.onDelete,
-   
   }) : super(key: key);
 
-
-  void _showEditDialog(BuildContext context) {
+ void showEditDialog(BuildContext context, RaceResultItem result) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Edit Result - ${result.name}'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                RaceEditField('BIB', result.bib),
-                RaceEditField('Name', result.name),
-                RaceEditField('Cycle Time', result.cycleTime),
-                RaceEditField('Run Time', result.runTime),
-                RaceEditField('Swim Time', result.swimTime),
-                RaceEditField('Duration', result.duration),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                // TODO: Implement save functionality
-                Navigator.of(context).pop();
-              },
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+      builder: (context) => EditResultDialog(
+        result: result,
+        onSave: (updatedResult) {
 
-  Widget RaceEditField(String label, String initialValue) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
-        controller: TextEditingController(text: initialValue),
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        ),
+          Navigator.of(context).pop();
+        },
+        onCancel: () => Navigator.of(context).pop(),
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
       //when the user taps on the tile, show the edit dialog
-      onTap: () {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return EditResultDialog(
-            result: result,
-            onSave: (updatedResult) {
-              // TODO: Implement save functionality in parent widget
-              if (onEdit != null) onEdit!();
-            },
-          );
-        },
-      );
-    },
-    //when the user long presses on the tile, show the delete confirmation dialog
-     onLongPress: () {
-        // Show delete confirmation dialog
+      onTap: () => showEditDialog(context, result),
+      //when the user long presses on the tile, show the delete confirmation dialog
+      onLongPress: () {
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('Delete Result'),
-              content: Text('Are you sure you want to delete ${result.name}\'s result?'),
+              content: Text(
+                  'Are you sure you want to delete ${result.participantName}\'s result?'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
@@ -106,7 +55,7 @@ class ResultListTile extends StatelessWidget {
                 ),
                 TextButton(
                   style: TextButton.styleFrom(
-                    foregroundColor: Colors.red,
+                    foregroundColor: RaceColors.red,
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -127,19 +76,25 @@ class ResultListTile extends StatelessWidget {
           child: Row(
             children: [
               DataInRow(text: result.rank.toString(), flex: 1),
-              DataInRow(text: result.bib, flex: 1),
-              DataInRow(text: result.name, flex: 1),
-              DataInRow(text: result.cycleTime, flex: 2),
-              DataInRow(text: result.runTime, flex: 2),
-              DataInRow(text: result.swimTime, flex: 2),
-              DataInRow(text: result.duration, flex: 2),
+              DataInRow(text: result.bibNumber, flex: 1),
+              DataInRow(text: result.participantName, flex: 2),
+              DataInRow(
+                  text: result.getSegmentTime('Cycle')?.formattedDuration ??
+                      '--:--:--',
+                  flex: 1),
+              DataInRow(
+                  text: result.getSegmentTime('Run')?.formattedDuration ??
+                      '--:--:--',
+                  flex: 1),
+              DataInRow(
+                  text: result.getSegmentTime('Swim')?.formattedDuration ??
+                      '--:--:--',
+                  flex: 1),
+              DataInRow(text: result.formattedTotalDuration, flex: 1),
             ],
           ),
         ),
       ),
     );
   }
-
- 
 }
-

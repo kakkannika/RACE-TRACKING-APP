@@ -41,7 +41,7 @@ class TwoStepListTile extends StatelessWidget {
             onPressed: onSelectBib,
             style: TextButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              textStyle: const TextStyle(fontSize: 14),
+              textStyle: TextStyle(fontSize: RaceTextStyles.subbody.fontSize),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,

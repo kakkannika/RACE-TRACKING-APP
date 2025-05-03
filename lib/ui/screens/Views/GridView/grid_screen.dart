@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:race_traking_app/ui/screens/GridView/widget/BIB_Button.dart';
+import 'package:race_traking_app/ui/screens/Views/GridView/widget/BIB_Button.dart';
 import 'package:race_traking_app/ui/theme/theme.dart';
 
 class ParticipantGridView extends StatefulWidget {
-  const ParticipantGridView({Key? key}) : super(key: key);
+   final String segment;
+  const ParticipantGridView({Key? key,required this.segment,}) : super(key: key);
 
   @override
   State<ParticipantGridView> createState() => _ParticipantGridViewState();

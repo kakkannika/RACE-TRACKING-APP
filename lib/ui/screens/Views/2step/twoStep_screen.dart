@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:race_traking_app/ui/screens/2step/widget/TwoStep_list_tile.dart';
+import 'package:race_traking_app/ui/screens/Views/2step/widget/TwoStep_list_tile.dart';
 import 'package:race_traking_app/ui/theme/theme.dart';
 import 'package:race_traking_app/ui/widgets/headerRow.dart';
 
 class TwoStepView extends StatefulWidget {
-  const TwoStepView({Key? key}) : super(key: key);
+  final String segment;
+  const TwoStepView({Key? key,required this.segment,}) : super(key: key);
 
   @override
   State<TwoStepView> createState() => _TwoStepViewState();
@@ -14,6 +15,7 @@ class _TwoStepViewState extends State<TwoStepView> {
   int? selectedIndex;
   int _currentPage = 0;
   final int _itemsPerPage = 10;
+  
 
   final List<Map<String, String>> finishTimes = [
     {"number": "01", "time": "02:30.88"},
@@ -108,7 +110,7 @@ class _TwoStepViewState extends State<TwoStepView> {
                     Text(
                       bibNumber,
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: RaceTextStyles.body.fontSize,
                         fontWeight: FontWeight.bold,
                         color: RaceColors.white,
                       ),

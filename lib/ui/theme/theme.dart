@@ -17,7 +17,7 @@ class RaceColors {
   
   static Color white              = Colors.white;
   static Color black              = Colors.black;
-
+  static Color red                = Colors.red;
   static Color get backGroundColor { 
     return RaceColors.primary;
   }
