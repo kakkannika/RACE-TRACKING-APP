@@ -68,7 +68,7 @@ class RaceSpacings {
   static const double xxl = 94; 
 
   static const double radius = 10; 
-  //static const double radiusLarge = 24; 
+  static const double radiusLarge = 20; 
 }
 
 

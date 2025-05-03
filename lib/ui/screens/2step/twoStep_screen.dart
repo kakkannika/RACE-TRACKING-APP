@@ -167,7 +167,7 @@ class _TwoStepViewState extends State<TwoStepView> {
 
         // Pagination Controls
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          padding: const EdgeInsets.symmetric(vertical:RaceSpacings.xs),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -186,7 +186,7 @@ class _TwoStepViewState extends State<TwoStepView> {
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   color: RaceColors.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(RaceSpacings.radiusLarge),
                 ),
                 child: Text(
                   _getPageRange(),
@@ -213,7 +213,7 @@ class _TwoStepViewState extends State<TwoStepView> {
 
         // Header
         const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: RaceSpacings.xs),
           child: Row(
             children: [
               HeaderRow(title: 'No.', flex: 1),
