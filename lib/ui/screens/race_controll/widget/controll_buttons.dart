@@ -3,13 +3,15 @@ import 'package:race_traking_app/ui/theme/theme.dart';
 
 class ControlButtons extends StatelessWidget {
   final bool isRunning;
-  final VoidCallback onStartPause;
+  final bool startButtonEnabled;
+  final VoidCallback onStartFinish;
   final VoidCallback onReset;
 
   const ControlButtons({
     Key? key,
     required this.isRunning,
-    required this.onStartPause,
+    this.startButtonEnabled = true,
+    required this.onStartFinish,
     required this.onReset,
   }) : super(key: key);
 
@@ -20,7 +22,6 @@ class ControlButtons extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          // Reset Button
           ElevatedButton(
             onPressed: onReset,
             style: ElevatedButton.styleFrom(
@@ -39,18 +40,19 @@ class ControlButtons extends StatelessWidget {
             ),
           ),
 
-          // Start/Pause Button
           ElevatedButton(
-            onPressed: onStartPause,
+            onPressed: startButtonEnabled ? onStartFinish : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: RaceColors.primary,
+              backgroundColor: startButtonEnabled 
+                  ? RaceColors.primary
+                  : Colors.grey,
               foregroundColor: RaceColors.white,
               shape: const CircleBorder(),
               padding: const EdgeInsets.all(24),
               minimumSize: const Size(80, 80),
             ),
             child: Text(
-              isRunning ? 'Pause' : 'Start',
+              isRunning ? 'Finish' : 'Start',
               style: RaceTextStyles.label.copyWith(
                 color: RaceColors.white,
                 fontWeight: FontWeight.w500,
