@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:race_traking_app/data/repository/participant_repository.dart';
 import 'package:race_traking_app/model/participant.dart';
-import 'package:race_traking_app/utils/participant_repository_helper.dart';
 import 'package:race_traking_app/utils/bib_number_generator.dart';
 
 class MockParticipantRepository implements ParticipantRepository {
@@ -59,9 +58,18 @@ class MockParticipantRepository implements ParticipantRepository {
   @override
   Future<void> addParticipant(Participant participant) async {
     final existingIndex = _participants.indexWhere((p) => p.bibNumber == participant.bibNumber);
+    
     if (existingIndex != -1) {
-      BibNumberGenerator.sortParticipantsByBib(_participants);
-      ParticipantRepositoryHelper.shiftBibNumbersUpForInsert(_participants, participant.bibNumber);
+            BibNumberGenerator.sortParticipantsByBib(_participants);
+      
+            final indexToInsert = BibNumberGenerator.findParticipantIndexByBib(_participants, participant.bibNumber);
+      if (indexToInsert != -1) {
+                for (int i = _participants.length - 1; i >= indexToInsert; i--) {
+          final current = _participants[i];
+          final updatedParticipant = BibNumberGenerator.incrementBibNumber(current);
+          _participants[i] = updatedParticipant;
+        }
+      }
     }
     
     _participants.add(participant);
@@ -74,16 +82,12 @@ class MockParticipantRepository implements ParticipantRepository {
     if (index != -1) {
       _participants[index] = participant;
     } else {
-      final existingParticipant = ParticipantRepositoryHelper.findParticipantByName(
-        _participants,
-        participant.firstName,
-        participant.lastName
+            final oldParticipantIndex = _participants.indexWhere(
+        (p) => p.firstName == participant.firstName && p.lastName == participant.lastName
       );
       
-      if (existingParticipant != null) {
-        _participants.removeWhere(
-          (p) => p.firstName == participant.firstName && p.lastName == participant.lastName
-        );
+      if (oldParticipantIndex != -1) {
+        _participants.removeAt(oldParticipantIndex);
         _participants.add(participant);
       } else {
         _participants.add(participant);
@@ -93,9 +97,19 @@ class MockParticipantRepository implements ParticipantRepository {
 
   @override
   Future<void> deleteParticipant(String bibNumber) async {
-    BibNumberGenerator.sortParticipantsByBib(_participants);
+        BibNumberGenerator.sortParticipantsByBib(_participants);
     
-    ParticipantRepositoryHelper.shiftBibNumbersDownAfterDelete(_participants, bibNumber);
+        final deleteIndex = BibNumberGenerator.findParticipantIndexByBib(_participants, bibNumber);
+    
+    if (deleteIndex != -1) {
+            _participants.removeAt(deleteIndex);
+      
+            for (int i = deleteIndex; i < _participants.length; i++) {
+        final current = _participants[i];
+        final updatedParticipant = BibNumberGenerator.decrementBibNumber(current);
+        _participants[i] = updatedParticipant;
+      }
+    }
     
     BibNumberGenerator.sortParticipantsByBib(_participants);
   }

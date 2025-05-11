@@ -5,7 +5,7 @@ import 'package:race_traking_app/utils/bib_number_generator.dart';
 
 class ParticipantList extends StatefulWidget {
   final List<Participant> participants;
-  final Function(Participant) onEdit;
+  final Function(Participant)? onEdit;
   final Function(String) onDelete;
   final Function(Participant, String) onSave;
   final Function(Participant) onAdd;
@@ -15,7 +15,7 @@ class ParticipantList extends StatefulWidget {
   const ParticipantList({
     Key? key,
     required this.participants,
-    required this.onEdit,
+    this.onEdit,
     required this.onDelete,
     required this.onSave,
     required this.onAdd,
@@ -37,35 +37,27 @@ class _ParticipantListState extends State<ParticipantList> {
   @override
   void initState() {
     super.initState();
-    // Set the initial BIB number when the widget initializes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
       _updateNextBibNumber();
     });
   }
 
   void _updateNextBibNumber() {
-    // Get the next available BIB number
-    final nextBib = BibNumberGenerator.generateNextBibNumber(widget.participants);
+        final nextBib = BibNumberGenerator.generateNextBibNumber(widget.participants);
     
-    // Only update if the new BIB number is different from the current one
-    // This prevents unnecessary text controller updates
-    if (newBibController.text != nextBib) {
+            if (newBibController.text != nextBib) {
       newBibController.text = nextBib;
     }
   }
 
-  // Handle deleting a participant, with optional auto-renumbering
-  void _handleDeleteParticipant(String bibNumber) {
-    // Delete participant - renumbering is now handled in the provider
-    widget.onDelete(bibNumber);
+    void _handleDeleteParticipant(String bibNumber) {
+        widget.onDelete(bibNumber);
   }
 
   @override
   void didUpdateWidget(ParticipantList oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Always update the BIB number whenever the participants list changes
-    // This handles additions, removals, and updates
-    _updateNextBibNumber();
+            _updateNextBibNumber();
   }
 
   @override
@@ -127,13 +119,10 @@ class _ParticipantListState extends State<ParticipantList> {
 
       widget.onAdd(newParticipant);
       
-      // Clear only the name field, not the BIB field
-      newNameController.clear();
+            newNameController.clear();
       
-      // Wait briefly for the add operation to complete
-      Future.delayed(const Duration(milliseconds: 300), () {
-        // Generate the next BIB number
-        _updateNextBibNumber();
+            Future.delayed(const Duration(milliseconds: 300), () {
+                _updateNextBibNumber();
       });
     }
   }
@@ -210,8 +199,7 @@ class _ParticipantListState extends State<ParticipantList> {
               },
             ),
             const SizedBox(height: 16),
-            // Add new participant form
-            Padding(
+                        Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
               child: Row(
                 children: [

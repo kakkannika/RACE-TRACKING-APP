@@ -24,11 +24,12 @@ class RaceResultItem {
   String get formattedTotalDuration {
     if (totalDuration == null) return "--:--:--";
     
-    final minutes = totalDuration!.inMinutes;
-    final seconds = totalDuration!.inSeconds % 60;
-    final milliseconds = totalDuration!.inMilliseconds % 1000;
+    final hours = totalDuration!.inHours;
+    final minutes = (totalDuration!.inMinutes % 60).toString().padLeft(2, '0');
+    final seconds = (totalDuration!.inSeconds % 60).toString().padLeft(2, '0');
+    final milliseconds = (totalDuration!.inMilliseconds % 1000 ~/ 10).toString().padLeft(2, '0');
     
-    return "$minutes:${seconds.toString().padLeft(2, '0')}.${(milliseconds ~/ 10).toString().padLeft(2, '0')}";
+    return "$hours:$minutes:$seconds.$milliseconds";
   }
 }
 

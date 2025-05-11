@@ -6,36 +6,6 @@ import 'package:race_traking_app/utils/bib_number_generator.dart';
 /// Utility class with helper functions for participant repositories
 class ParticipantRepositoryHelper {
   
-  /// Shifts BIB numbers up for participants when inserting a new participant with an existing BIB
-  static void shiftBibNumbersUpForInsert(List<Participant> participants, String bibNumber) {
-    // Sort participants by BIB number
-    BibNumberGenerator.sortParticipantsByBib(participants);
-    
-    // Find index of the participant with the given BIB
-    final insertionIndex = BibNumberGenerator.findParticipantIndexByBib(participants, bibNumber);
-    if (insertionIndex == -1) return;
-    
-    // Shift BIBs up starting from the insertion point (in reverse order)
-    for (int i = participants.length - 1; i >= insertionIndex; i--) {
-      participants[i] = BibNumberGenerator.incrementBibNumber(participants[i]);
-    }
-  }
-
-  /// Shifts BIB numbers down after deleting a participant
-  static void shiftBibNumbersDownAfterDelete(List<Participant> participants, String bibNumber) {
-    // Find the participant index
-    final deleteIndex = BibNumberGenerator.findParticipantIndexByBib(participants, bibNumber);
-    if (deleteIndex == -1) return;
-    
-    // Remove the participant
-    participants.removeAt(deleteIndex);
-    
-    // Decrement BIB numbers for all participants after the deleted one
-    for (int i = deleteIndex; i < participants.length; i++) {
-      participants[i] = BibNumberGenerator.decrementBibNumber(participants[i]);
-    }
-  }
-
   /// Creates a Firestore batch for shifting BIB numbers up during insertion
   static WriteBatch createBibShiftUpBatch(
     FirebaseFirestore firestore,
@@ -120,21 +90,6 @@ class ParticipantRepositoryHelper {
     }
     
     return batch;
-  }
-  
-  /// Finds a participant by name (first and last name)
-  static Participant? findParticipantByName(
-    List<Participant> participants, 
-    String firstName, 
-    String lastName
-  ) {
-    try {
-      return participants.firstWhere(
-        (p) => p.firstName == firstName && p.lastName == lastName
-      );
-    } catch (e) {
-      return null;
-    }
   }
   
   /// Creates a Firestore batch for updating a participant with a new BIB number

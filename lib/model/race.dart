@@ -9,9 +9,7 @@ class Race {
   final RaceStatus status;
   final DateTime? startTime;
   final DateTime? endTime;
-  final List<String> participantBibNumbers; // References to participants
-  final Map<String, double> segmentDistances; // segment name -> distance
-
+  final List<String> participantBibNumbers;   final Map<String, double> segmentDistances; 
   const Race({
     required this.date,
     this.status = RaceStatus.notStarted,
@@ -19,10 +17,7 @@ class Race {
     this.endTime,
     this.participantBibNumbers = const [],
     this.segmentDistances = const {
-      'swim': 1000, // meters
-      'cycle': 20000, // meters (20km)
-      'run': 5000, // meters (5km)
-    },
+      'swim': 1000,       'cycle': 20000,       'run': 5000,     },
   });
 
   Race copyWith({

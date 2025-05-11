@@ -3,7 +3,7 @@ import 'package:race_traking_app/ui/screens/participants/participant_screen.dart
 import 'package:race_traking_app/ui/screens/race_controll/race_controll.dart';
 import 'package:race_traking_app/ui/screens/tracking_time/tracking_time.dart';
 import 'package:race_traking_app/ui/theme/theme.dart';
-import 'package:race_traking_app/ui/screens/resultBoard/test_resultBoard_screen.dart';
+import 'package:race_traking_app/ui/screens/resultBoard/resultBoard_screen.dart';
 
 class Navbar extends StatelessWidget {
   final int selectedIndex;

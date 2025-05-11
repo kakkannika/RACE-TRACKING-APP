@@ -1,7 +1,6 @@
 class SegmentTime {
   final String participantBibNumber;
-  final String segmentName; // "swim", "cycle", "run"
-  final DateTime startTime;
+  final String segmentName;   final DateTime startTime;
   final DateTime? endTime;
   
   const SegmentTime({
@@ -66,4 +65,6 @@ class SegmentTime {
   String toString() {
     return 'SegmentTime(participantBibNumber: $participantBibNumber, segmentName: $segmentName, startTime: $startTime, endTime: $endTime)';
   }
+
+  
 } 
