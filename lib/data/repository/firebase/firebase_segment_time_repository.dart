@@ -39,7 +39,7 @@ class FirebaseSegmentTimeRepository implements SegmentTimeRepository {
             .get();
             
         return raceSnapshot.docs.isNotEmpty;
-      } catch (innerError) {
+      } catch (error) {
         return false;
       }
     }
@@ -208,7 +208,7 @@ class FirebaseSegmentTimeRepository implements SegmentTimeRepository {
                 .get();
                 
             if (!previousDocSnapshot.exists) {
-              throw Exception('Previous segment must be completed first');
+              throw Exception('Previous segment must start first');
             }
             
             final previousSegmentTime = SegmentTimeDto.fromJson(

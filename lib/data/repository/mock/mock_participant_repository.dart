@@ -81,18 +81,9 @@ class MockParticipantRepository implements ParticipantRepository {
     
     if (index != -1) {
       _participants[index] = participant;
-    } else {
-            final oldParticipantIndex = _participants.indexWhere(
-        (p) => p.firstName == participant.firstName && p.lastName == participant.lastName
-      );
-      
-      if (oldParticipantIndex != -1) {
-        _participants.removeAt(oldParticipantIndex);
-        _participants.add(participant);
-      } else {
-        _participants.add(participant);
-      }
-    }
+     } 
+
+  
   }
 
   @override

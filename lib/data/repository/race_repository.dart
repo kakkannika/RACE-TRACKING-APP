@@ -10,6 +10,4 @@ abstract class RaceRepository {
     Future<void> finishRace();
   
     Future<void> resetRace();
-  
-
 }

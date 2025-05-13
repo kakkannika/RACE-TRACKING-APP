@@ -100,11 +100,7 @@ class _ParticipantGridState extends State<ParticipantGrid> {
     return TimestampFormatter.getTimestampFromSegment(time);
   }
 
-    String _getPageRange(int totalItems) {
-    final start = (_currentPage * _itemsPerPage) + 1;
-    final end = (_currentPage + 1) * _itemsPerPage;
-    return '$start-${end > totalItems ? totalItems : end}';
-  }
+  
 
     int _getItemCount(int totalItems, int totalPages) {
     if (_currentPage == totalPages - 1) {

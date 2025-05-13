@@ -88,29 +88,7 @@ class FirebaseParticipantRepository implements ParticipantRepository {
         await _firestore.collection(_collectionPath)
             .doc(participant.bibNumber)
             .update(ParticipantDto.toJson(participant));
-      } else {
-        final querySnapshot = await _firestore.collection(_collectionPath)
-            .where('firstName', isEqualTo: participant.firstName)
-            .where('lastName', isEqualTo: participant.lastName)
-            .get();
-        
-        if (querySnapshot.docs.isNotEmpty) {
-          final oldBib = querySnapshot.docs.first.id;
-          
-          final batch = ParticipantRepositoryHelper.createBibUpdateBatch(
-            _firestore,
-            _collectionPath,
-            oldBib,
-            participant
-          );
-          
-          await batch.commit();
-        } else {
-          await _firestore.collection(_collectionPath)
-              .doc(participant.bibNumber)
-              .set(ParticipantDto.toJson(participant));
-        }
-      }
+      } 
     } catch (e) {
       rethrow;
     }

@@ -24,15 +24,17 @@ class RaceTrackingScreen extends StatefulWidget {
 class _RaceTrackingScreenState extends State<RaceTrackingScreen> {
   int _selectedIndex = 0;
   late String _segment;
-  
+
   @override
   void initState() {
     super.initState();
     _segment = widget.segment;
-    
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-      final segmentProvider = Provider.of<SegmentTimeProvider>(context, listen: false);
-      final participantProvider = Provider.of<ParticipantProvider>(context, listen: false);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final segmentProvider =
+          Provider.of<SegmentTimeProvider>(context, listen: false);
+      final participantProvider =
+          Provider.of<ParticipantProvider>(context, listen: false);
       segmentProvider.fetchSegmentTimes();
       participantProvider.fetchParticipants();
     });
@@ -40,47 +42,42 @@ class _RaceTrackingScreenState extends State<RaceTrackingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final segmentTimeProvider = Provider.of<SegmentTimeProvider>(context, listen: false);
-    
-        final twoStepKey = ValueKey<int>(segmentTimeProvider.hashCode + DateTime.now().microsecondsSinceEpoch);
-    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: RaceColors.primary,
         centerTitle: true,
         title: Text(
-          '$_segment Segment', 
-          style: TextStyle(color: RaceColors.white, fontSize: RaceTextStyles.subtitle.fontSize),
+          '$_segment Segment',
+          style: TextStyle(
+              color: RaceColors.white,
+              fontSize: RaceTextStyles.subtitle.fontSize),
         ),
         leading: BackButton(color: RaceColors.white),
       ),
       body: Column(
         children: [
-                    Consumer<RaceProvider>(
-            builder: (context, raceProvider, _) {
-              final raceState = raceProvider.currentRaceValue;
-              bool isRaceActive = false;
-              
-              if (raceState.data != null) {
-                isRaceActive = raceState.data!.status == RaceStatus.started;
-              }
-              
-              return Container(
-                padding: const EdgeInsets.symmetric(vertical: RaceSpacings.xs),
-                child: Column(
-                  children: [
-                    const SizedBox(height: RaceSpacings.xs),
-                    TimerDisplay(
-                      isRunning: isRaceActive,
-                      onTick: null,
-                    ),
-                  ],
-                ),
-              );
-            }
-          ),
+          Consumer<RaceProvider>(builder: (context, raceProvider, _) {
+            final raceState = raceProvider.currentRaceValue;
+            bool isRaceActive = false;
 
-                    Padding(
+            if (raceState.data != null) {
+              isRaceActive = raceState.data!.status == RaceStatus.started;
+            }
+
+            return Container(
+              padding: const EdgeInsets.symmetric(vertical: RaceSpacings.xs),
+              child: Column(
+                children: [
+                  const SizedBox(height: RaceSpacings.xs),
+                  TimerDisplay(
+                    isRunning: isRaceActive,
+                    onTick: null,
+                  ),
+                ],
+              ),
+            );
+          }),
+          Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: Row(
               children: [
@@ -95,67 +92,69 @@ class _RaceTrackingScreenState extends State<RaceTrackingScreen> {
               ],
             ),
           ),
-
-                    Expanded(
+          Expanded(
             child: Consumer2<SegmentTimeProvider, ParticipantProvider>(
               builder: (context, segmentTimeProvider, participantProvider, _) {
                 final segmentTimesValue = segmentTimeProvider.segmentTimesValue;
                 final participantsValue = participantProvider.participantsValue;
-                
-                                if (segmentTimesValue.isLoading || participantsValue.isLoading) {
+
+                if (segmentTimesValue.isLoading ||
+                    participantsValue.isLoading) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                
-                                if (segmentTimesValue.isError) {
+
+                if (segmentTimesValue.isError) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                        const Icon(Icons.error_outline,
+                            size: 48, color: Colors.red),
                         const SizedBox(height: 16),
                         Text('Error: ${segmentTimesValue.error}'),
                         const SizedBox(height: 16),
                         ElevatedButton(
-                          onPressed: () => segmentTimeProvider.fetchSegmentTimes(),
+                          onPressed: () =>
+                              segmentTimeProvider.fetchSegmentTimes(),
                           child: const Text('Retry'),
                         ),
                       ],
                     ),
                   );
                 }
-                
+
                 if (participantsValue.isError) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                        const Icon(Icons.error_outline,
+                            size: 48, color: Colors.red),
                         const SizedBox(height: 16),
-                        Text('Error loading participants: ${participantsValue.error}'),
+                        Text(
+                            'Error loading participants: ${participantsValue.error}'),
                         const SizedBox(height: 16),
                         ElevatedButton(
-                          onPressed: () => participantProvider.fetchParticipants(),
+                          onPressed: () =>
+                              participantProvider.fetchParticipants(),
                           child: const Text('Retry'),
                         ),
                       ],
                     ),
                   );
                 }
-                
-                                return IndexedStack(
+
+                return IndexedStack(
                   index: _selectedIndex,
                   children: [
                     ParticipantGrid(
                       segmentName: _segment,
                       onTimeRecorded: () {
-                                                segmentTimeProvider.fetchSegmentTimes();
-                                                setState(() {});
+                        segmentTimeProvider.fetchSegmentTimes();
+                        setState(() {});
                       },
                     ),
-                    TwoStepView(
-                      key: twoStepKey,
-                      segment: _segment
-                    ),
+                    TwoStepView(segment: _segment),
                   ],
                 );
               },
@@ -171,7 +170,7 @@ class _RaceTrackingScreenState extends State<RaceTrackingScreen> {
     required int index,
   }) {
     final isSelected = _selectedIndex == index;
-    
+
     return Expanded(
       child: GestureDetector(
         onTap: () => setState(() => _selectedIndex = index),

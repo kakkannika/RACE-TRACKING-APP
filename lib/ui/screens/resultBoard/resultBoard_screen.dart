@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:race_traking_app/model/race_result_board.dart';
 import 'package:race_traking_app/ui/providers/race_result_board_provider.dart';
 import 'package:race_traking_app/ui/providers/race_provider.dart';
 import 'package:race_traking_app/ui/screens/resultBoard/widget/resultBoard_list_tile.dart';
@@ -20,26 +19,32 @@ class ResultBoardScreen extends StatefulWidget {
 class _ResultBoardScreenState extends State<ResultBoardScreen> {
   int _rowsPerPage = 5;
   int _currentPage = 1;
-  
+
   String _getCurrentRange(int totalItems) {
     final startIndex = ((_currentPage - 1) * _rowsPerPage) + 1;
     final endIndex = _currentPage * _rowsPerPage;
     final actualEnd = endIndex > totalItems ? totalItems : endIndex;
     return '$startIndex-$actualEnd';
   }
-  
+
   @override
   void initState() {
     super.initState();
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-            final raceResultBoardProvider = Provider.of<RaceResultBoardProvider>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final raceResultBoardProvider =
+          Provider.of<RaceResultBoardProvider>(context, listen: false);
       final raceProvider = Provider.of<RaceProvider>(context, listen: false);
-      
-            if (raceProvider.currentRaceValue.isSuccess == true) {
-        final race = raceProvider.currentRaceValue.data!;
-        raceResultBoardProvider.generateRaceResultBoard(race);
-      } else {
-                raceResultBoardProvider.fetchCurrentRaceResultBoard();
+
+      try {
+        if (raceProvider.currentRaceValue.isSuccess == true) {
+          final race = raceProvider.currentRaceValue.data!;
+          await raceResultBoardProvider.generateRaceResultBoard(race);
+        } else {
+          await raceResultBoardProvider.fetchCurrentRaceResultBoard();
+        }
+      } catch (error) {
+        // If generating fails, fallback to fetching current race board
+        await raceResultBoardProvider.fetchCurrentRaceResultBoard();
       }
     });
   }
@@ -50,33 +55,30 @@ class _ResultBoardScreenState extends State<ResultBoardScreen> {
       backgroundColor: RaceColors.white,
       body: Column(
         children: [
-                    Container(
+          Container(
             padding: const EdgeInsets.symmetric(vertical: 16),
             color: RaceColors.primary,
             width: double.infinity,
             child: Center(
               child: Text(
-              'RESULT BOARD',
-              style: RaceTextStyles.body.copyWith(
-                color: RaceColors.white,
-                fontWeight: FontWeight.bold,
+                'RESULT BOARD',
+                style: RaceTextStyles.body.copyWith(
+                  color: RaceColors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            ),
           ),
-
-                    Expanded(
+          Expanded(
             child: Consumer<RaceResultBoardProvider>(
               builder: (context, provider, child) {
                 final asyncValue = provider.raceResultBoardValue;
-                
-                                if (asyncValue.isLoading) {
-                  return const Center(
-                    child: LoadingIndicator()
-                  );
+
+                if (asyncValue.isLoading) {
+                  return const Center(child: LoadingIndicator());
                 }
-                
-                                if (asyncValue.isError) {
+
+                if (asyncValue.isError) {
                   return Center(
                     child: ErrorView(
                       error: asyncValue.error.toString(),
@@ -86,22 +88,22 @@ class _ResultBoardScreenState extends State<ResultBoardScreen> {
                     ),
                   );
                 }
-                
-                                final raceResultBoard = asyncValue.data!;
+
+                final raceResultBoard = asyncValue.data!;
                 final results = raceResultBoard.resultItems;
                 final totalItems = results.length;
-                
+
                 if (results.isEmpty) {
                   return const Center(child: Text('No results available'));
                 }
-                
+
                 return SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: SizedBox(
                     width: 1000,
                     child: Column(
                       children: [
-                                                Container(
+                        Container(
                           decoration: BoxDecoration(
                             border: Border(
                               bottom: BorderSide(color: RaceColors.lightGrey),
@@ -123,12 +125,12 @@ class _ResultBoardScreenState extends State<ResultBoardScreen> {
                             ),
                           ),
                         ),
-
-                                                Expanded(
+                        Expanded(
                           child: ListView.builder(
                             itemCount: _getPageItemCount(totalItems),
                             itemBuilder: (context, index) {
-                              final resultIndex = ((_currentPage - 1) * _rowsPerPage) + index;
+                              final resultIndex =
+                                  ((_currentPage - 1) * _rowsPerPage) + index;
                               if (resultIndex >= results.length) {
                                 return null;
                               }
@@ -139,18 +141,18 @@ class _ResultBoardScreenState extends State<ResultBoardScreen> {
                                 onEdit: () {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text('Editing result for ${results[resultIndex].participantName}')
-                                    ),
+                                        content: Text(
+                                            'Editing result for ${results[resultIndex].participantName}')),
                                   );
                                 },
-                                onDelete: () => _deleteResult(resultIndex, provider, results),
+                                
                               );
                             },
                           ),
                         ),
-
-                                                Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
                             color: RaceColors.primary,
                           ),
@@ -165,10 +167,13 @@ class _ResultBoardScreenState extends State<ResultBoardScreen> {
                                   ),
                                   const SizedBox(width: 8),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8),
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: RaceColors.white),
-                                      borderRadius: BorderRadius.circular(RaceSpacings.radius),
+                                      border:
+                                          Border.all(color: RaceColors.white),
+                                      borderRadius: BorderRadius.circular(
+                                          RaceSpacings.radius),
                                     ),
                                     child: DropdownButton<int>(
                                       value: _rowsPerPage,
@@ -186,7 +191,10 @@ class _ResultBoardScreenState extends State<ResultBoardScreen> {
                                         if (newValue != null) {
                                           setState(() {
                                             _rowsPerPage = newValue;
-                                                                                        _currentPage = ((_currentPage - 1) * _rowsPerPage ~/ newValue) + 1;
+                                            _currentPage = ((_currentPage - 1) *
+                                                    _rowsPerPage ~/
+                                                    newValue) +
+                                                1;
                                           });
                                         }
                                       },
@@ -201,7 +209,8 @@ class _ResultBoardScreenState extends State<ResultBoardScreen> {
                                     style: TextStyle(color: RaceColors.white),
                                   ),
                                   IconButton(
-                                    icon: Icon(Icons.chevron_left, color: RaceColors.white),
+                                    icon: Icon(Icons.chevron_left,
+                                        color: RaceColors.white),
                                     onPressed: _currentPage > 1
                                         ? () {
                                             setState(() {
@@ -211,8 +220,10 @@ class _ResultBoardScreenState extends State<ResultBoardScreen> {
                                         : null,
                                   ),
                                   IconButton(
-                                    icon: Icon(Icons.chevron_right, color: RaceColors.white),
-                                    onPressed: (_currentPage * _rowsPerPage) < totalItems
+                                    icon: Icon(Icons.chevron_right,
+                                        color: RaceColors.white),
+                                    onPressed: (_currentPage * _rowsPerPage) <
+                                            totalItems
                                         ? () {
                                             setState(() {
                                               _currentPage++;
@@ -232,8 +243,7 @@ class _ResultBoardScreenState extends State<ResultBoardScreen> {
               },
             ),
           ),
-
-                    const Navbar(
+          const Navbar(
             selectedIndex: 3,
           ),
         ],
@@ -241,23 +251,10 @@ class _ResultBoardScreenState extends State<ResultBoardScreen> {
     );
   }
 
-    int _getPageItemCount(int totalItems) {
+  int _getPageItemCount(int totalItems) {
     final remainingItems = totalItems - ((_currentPage - 1) * _rowsPerPage);
     return remainingItems < _rowsPerPage ? remainingItems : _rowsPerPage;
   }
 
-  void _deleteResult(int index, RaceResultBoardProvider provider, List<RaceResultItem> results) {
-    final deletedResult = results[index];
-    
-                
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Result deletion not implemented'),
-        action: SnackBarAction(
-          label: 'OK',
-          onPressed: () {},
-        ),
-      ),
-    );
-  }
+  
 }

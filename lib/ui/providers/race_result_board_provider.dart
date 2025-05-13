@@ -77,13 +77,14 @@ class RaceResultBoardProvider extends ChangeNotifier {
 
     Future<void> generateRaceResultBoard(Race race) async {
     try {
-            raceResultBoardValue = const AsyncValue.loading();
+      raceResultBoardValue = const AsyncValue.loading();
       notifyListeners();
       
-            final board = await _raceResultBoardRepository.generateRaceResultBoard(race);
+      final board = await _raceResultBoardRepository.generateRaceResultBoard(race);
       raceResultBoardValue = AsyncValue.success(board);
+      notifyListeners();
       
-            if (_isMockRepository) {
+      if (_isMockRepository) {
         await fetchCurrentRaceResultBoard();
       }
     } catch (error) {
